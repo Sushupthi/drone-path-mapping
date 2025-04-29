@@ -252,37 +252,46 @@
     }
 
     function exportPath() {
-      let exportData = {};
-      if (window.generatedFlightLines && window.generatedFlightLines.length > 0) {
-        exportData = {
-          flightLines: window.generatedFlightLines,
-          altitude: document.getElementById("altitude").value,
-          speed: document.getElementById("speed").value,
-          cameraAngle: document.getElementById("camera-angle").value,
-          frontOverlap: document.getElementById("front-overlap").value,
-          sideOverlap: document.getElementById("side-overlap").value,
-        };
-      } else if (drawnShape) {
-        const path = drawnShape.getPath().getArray().map(latLng => ({ lat: latLng.lat(), lng: latLng.lng() }));
-        exportData = {
-          polygon: path,
-          altitude: document.getElementById("altitude").value,
-          speed: document.getElementById("speed").value,
-          cameraAngle: document.getElementById("camera-angle").value,
-          frontOverlap: document.getElementById("front-overlap").value,
-          sideOverlap: document.getElementById("side-overlap").value,
-        };
-      } else {
-        alert("No path to export!");
-        return;
-      }
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "drone_path.json";
-      link.click();
-      alert("Path exported successfully!");
-    }
+  let kmlContent = '';
+  if (window.generatedFlightLines && window.generatedFlightLines.length > 0) {
+    const altitude = document.getElementById("altitude").value;
+    const speed = document.getElementById("speed").value;
+
+    const waypoints = window.generatedFlightLines.flat();
+
+    // KML file header
+    kmlContent += `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    kmlContent += `<kml xmlns="http://www.opengis.net/kml/2.2" 
+      xmlns:gx="http://www.google.com/kml/ext/2.2">\n<Document>\n`;
+    kmlContent += `<name>Drone Waypoint Mission</name>\n`;
+
+    // Add individual placemarks
+    waypoints.forEach((point, index) => {
+      kmlContent += `<Placemark>\n<name>WP${index + 1}</name>\n<Point>\n<coordinates>${point.lng},${point.lat},${altitude}</coordinates>\n</Point>\n</Placemark>\n`;
+    });
+
+    // Optional: Draw full path as LineString
+    kmlContent += `<Placemark>\n<name>Flight Path</name>\n<LineString>\n<coordinates>\n`;
+    waypoints.forEach(point => {
+      kmlContent += `${point.lng},${point.lat},${altitude}\n`;
+    });
+    kmlContent += `</coordinates>\n</LineString>\n</Placemark>\n`;
+
+    kmlContent += `</Document>\n</kml>`;
+
+    // Trigger file download
+    const blob = new Blob([kmlContent], { type: "application/vnd.google-earth.kml+xml" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "drone_path.kml";
+    link.click();
+    alert("KML exported successfully!");
+
+  } else {
+    alert("No flight path to export as KML.");
+  }
+}
+
 
     function addCoordinateToList(point) {
       const coordinatesList = document.getElementById("coordinates-list");

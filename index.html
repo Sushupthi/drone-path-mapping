@@ -133,7 +133,7 @@
       const altitude = document.getElementById("altitude").value;
       const speed = document.getElementById("speed").value;
       const cameraAngle = document.getElementById("camera-angle").value;
-      alert(`Previewing Path:\nAltitude: ${altitude} m\nSpeed: ${speed} m/s\nCamera Angle: ${cameraAngle}°`);
+      alert(Previewing Path:\nAltitude: ${altitude} m\nSpeed: ${speed} m/s\nCamera Angle: ${cameraAngle}°);
     }
 
     // Generates a serpentine flight path.
@@ -284,11 +284,10 @@
       alert("Path exported successfully!");
     }
 
-
     function addCoordinateToList(point) {
       const coordinatesList = document.getElementById("coordinates-list");
       const listItem = document.createElement("li");
-      listItem.textContent = `Lat: ${point.lat.toFixed(6)}, Lng: ${point.lng.toFixed(6)}`;
+      listItem.textContent = Lat: ${point.lat.toFixed(6)}, Lng: ${point.lng.toFixed(6)};
       coordinatesList.appendChild(listItem);
     }
 
@@ -296,7 +295,7 @@
       clearCoordinatesDisplay();
       pathArray.forEach(point => {
         const listItem = document.createElement("li");
-        listItem.textContent = `Lat: ${point.lat().toFixed(6)}, Lng: ${point.lng().toFixed(6)}`;
+        listItem.textContent = Lat: ${point.lat().toFixed(6)}, Lng: ${point.lng().toFixed(6)};
         document.getElementById("coordinates-list").appendChild(listItem);
       });
     }
@@ -322,4 +321,3 @@
   </script>
 </body>
 </html>
-
